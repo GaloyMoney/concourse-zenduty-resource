@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+PAYLOAD=$(cat)
+
+WEBHOOK_URL=$(echo "$PAYLOAD" | jq -r '.source.webhook_url')
+ALERT_TYPE=$(echo "$PAYLOAD" | jq -r '.params.alert_type // "critical"')
+ENV=$(echo "$PAYLOAD" | jq -r '.params.env // "unknown"')
+
+JOB_URL="${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
+
+curl -s -X POST "${WEBHOOK_URL}" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"alert_type\": \"${ALERT_TYPE}\",
+    \"message\": \"Concourse job '${BUILD_JOB_NAME}' failed in pipeline '${BUILD_PIPELINE_NAME}' [${ENV}]\",
+    \"summary\": \"Job '${BUILD_JOB_NAME}' in pipeline '${BUILD_PIPELINE_NAME}' for environment '${ENV}' has failed. Build #${BUILD_NAME}.\",
+    \"entity_id\": \"concourse-${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${ENV}\",
+    \"urls\": [{\"link_url\": \"${JOB_URL}\", \"link_text\": \"Build URL\"}]
+  }" >&2
+
+echo '{"version":{"ref":"none"}}'
