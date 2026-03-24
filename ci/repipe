@@ -18,5 +18,5 @@ ytt -f ci > ${TMPDIR}/pipeline.yml
 
 echo "Updating pipeline @ ${target}"
 
-fly -t ${target} set-pipeline --team=${team} -p zenduty-notification-resource -c ${TMPDIR}/pipeline.yml
-fly -t ${target} unpause-pipeline --team=${team} -p zenduty-notification-resource
+fly -t ${target} set-pipeline --team=${team} -p zenduty-resource -c ${TMPDIR}/pipeline.yml
+fly -t ${target} unpause-pipeline --team=${team} -p zenduty-resource
