@@ -1,0 +1,7 @@
+#@data/values
+---
+git_uri: https://github.com/GaloyMoney/concourse-zenduty-resource
+git_branch: main
+gar_registry: us.gcr.io/galoyorg
+gar_registry_user: ((gar-creds.username))
+gar_registry_password: ((gar-creds.password))
